@@ -10,7 +10,7 @@ from fpdf import FPDF
 def web_search(query: str) -> str:
     """Search the web for current information. Use this for recent events, news, or facts you're unsure about."""
     try:
-        results = DDGS().text(query, max_results=9)
+        results = DDGS().text(query, max_results=10)
         if not results:
             return "No results found."
         return "\n\n".join(
