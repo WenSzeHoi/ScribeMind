@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
-from tools import web_search, generate_pdf_report
+from tools import web_search, search_images, generate_pdf_report
 
 
 SYSTEM_PROMPT = """You are a helpful AI search assistant. Your job is to answer the user's question by:
@@ -13,6 +13,11 @@ SYSTEM_PROMPT = """You are a helpful AI search assistant. Your job is to answer 
 4. If you already know the answer confidently (e.g. capital cities, basic math), answer directly without searching
 5. When the user asks for a "report", "write-up", "document", or wants to save findings, use the generate_pdf_report tool to create a formatted PDF. Provide a clear title and well-structured content with sections, bullet points, and source URLs.
    IMPORTANT: After generating a PDF, always show the user the exact full file path that the tool returns so they know exactly where to find it.
+6. When creating a PDF report, you SHOULD also find relevant images to make the report richer:
+   - Use search_images to find pictures related to the report topic
+   - Pass the image URLs (comma-separated) to generate_pdf_report via the 'images' parameter
+   - Use [IMG] markers in the content body where you want images to appear
+   - If you don't specify [IMG] markers, images will be placed at the end of the report
 
 Always be helpful, accurate, and cite your sources when using search results."""
 
@@ -26,7 +31,7 @@ def main():
         base_url="https://api.deepseek.com",
         api_key=os.getenv("DEEPSEEK_API_KEY"),
     )
-    tools = [web_search, generate_pdf_report]
+    tools = [web_search, search_images, generate_pdf_report]
 
     agent = create_agent(
         model=llm,
