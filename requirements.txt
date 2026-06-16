@@ -9,3 +9,5 @@ pydantic
 ddgs
 fpdf2
 Pillow
+python-pptx
+python-docx

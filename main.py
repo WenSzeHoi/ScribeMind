@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
-from tools import web_search, search_images, generate_pdf_report
+from tools import web_search, search_images, generate_pdf_report, generate_ppt_report, generate_word_report
 
 
 SYSTEM_PROMPT = """You are a helpful AI search assistant. Your job is to answer the user's question by:
@@ -18,6 +18,8 @@ SYSTEM_PROMPT = """You are a helpful AI search assistant. Your job is to answer 
    - Pass the image URLs (comma-separated) to generate_pdf_report via the 'images' parameter
    - Use [IMG] markers in the content body where you want images to appear
    - If you don't specify [IMG] markers, images will be placed at the end of the report
+7. When the user asks for a "presentation", "slides", "PowerPoint", "deck", or "PPT", use the generate_ppt_report tool instead. It accepts the same parameters (title, content, images) and uses the same markdown-style formatting. Each '# Section' becomes a section header slide, each '## Subsection' becomes a content slide with bullet points. Use search_images to find relevant pictures just like with PDF reports.
+8. When the user asks for a "Word document", "docx", "Word report", or "Microsoft Word file", use the generate_word_report tool. It accepts the same parameters (title, content, images) and uses the same markdown-style formatting. Each '# Section' becomes a Heading 1, each '## Subsection' becomes a Heading 2, and bullet points use Word's built-in bullet style. Use search_images to find relevant pictures just like with PDF and PPT reports.
 
 Always be helpful, accurate, and cite your sources when using search results."""
 
@@ -31,7 +33,7 @@ def main():
         base_url="https://api.deepseek.com",
         api_key=os.getenv("DEEPSEEK_API_KEY"),
     )
-    tools = [web_search, search_images, generate_pdf_report]
+    tools = [web_search, search_images, generate_pdf_report, generate_ppt_report, generate_word_report]
 
     agent = create_agent(
         model=llm,
